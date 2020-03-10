@@ -22,15 +22,10 @@ import org.json.simple.parser.ParseException;
  * @author kamil
  */
 public class getUser {
-    JSONArray response() throws IOException, JSONException, ParseException{
+    JSONArray response(String url) throws IOException, JSONException, ParseException{
         //####################################
         //Connect with website to get response
         //####################################
-        
-        //TODO wycioagnac do osbnej klasy laczenie ze strona 
-        
-        
-        String url = "https://jsonplaceholder.typicode.com/users";
         URL object = new URL(url);
         URLConnection con = object.openConnection();
 
@@ -45,40 +40,11 @@ public class getUser {
 
 
         while((inputLine = in.readLine()) != null){
-            //################################
-            // i - count of open new { 
-            // j - count of end }
-            // when i == j it means all data block is read in
-            //################################
-//            int i = 0; 
-//            int j = 0; 
-//            if(inputLine.contains("{")){
-//                i++;
-//                response.append(inputLine);
-//                while((inputLine = in.readLine()) != null){
                     response.append(inputLine);
-//                    if(inputLine.contains("{")){
-//                        i++;
-//                    }
-//                    if(inputLine.contains("}")){
-//                        j++;
-//                        if(i == j){
-//                            response.append(System.getProperty("line.separator"));  
-//                            break;
-//                        }
-//                    }
-//                }
-
-//            }   
         }
     
         in.close();
-//        JSONObject item = (JSONObject)parse.parse(response.toString());
-        
         JSONArray users = (JSONArray)parse.parse(response.toString());
-        
-//        System.out.println(users);
-
         return users;
     }
 }

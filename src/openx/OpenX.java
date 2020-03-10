@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONException;
@@ -62,25 +63,57 @@ public class OpenX {
         return count_post;
     }
     
-    List<JSONObject> title_non_unique(JSONArray l_p){
+    //#################
+    //Method which return list with non unique title
+    //#################
+    List<String> title_non_unique(JSONArray l_p){
         //l_p - list which contains all post
-        List<JSONObject> title = new ArrayList<>();
         
+        List<String> t_1 = new ArrayList<>();
+
         for(Object elem: l_p){
-            JSONObject JOp = (JSONObject) elem;
+            JSONObject jo = (JSONObject) elem;
+            t_1.add((String) jo.get("title"));           
+         }
+
+        List<String> title_non_unique = new ArrayList<>();
+        int k = 0;
+        for(int i =0; i<t_1.size(); i++){
+            List<String> t_2 = new ArrayList<>(t_1);
+            t_2.remove(i);
             
+            //separate each title into individual words
+            String[] a = t_1.get(i).split(" ");
+
+            for(int j = 0; j<a.length; j++){
+                //words with less than 6 characters are rejected
+                if(a[j].length() < 6){
+                    a[j] = null;
+                    break;
+                }
+                for(int m = 0; m< t_2.size(); m++){
+                    //for each title except the one that has been separated, it searches for a title that contains this word
+                    if(t_2.get(m).contains(a[j])){      //matches("(.*)" + a[j]+"(.*)")
+                        if(!title_non_unique.contains(t_2.get(m))){
+                            title_non_unique.add(t_2.get(m));      
+                        }
+                    }
+                }
+            }
         }
-        
-        return title;
+        System.out.println(title_non_unique);
+        return title_non_unique;
     }
     
     //#######################
     //method to search users who is the nearest to other
     //#######################
-    public void near_user(JSONArray l_u){
+    List<String> near_user(JSONArray l_u){
         //l_u - list which contains all users
         Map<Object, Object> map = new HashMap<>();
         Map<List<Object>, Object> map_user = new HashMap<>();
+        List<String> userNearest = new ArrayList<>();
+
         List<String> x = new ArrayList<>();
         
         for(Object elem: l_u){
@@ -130,9 +163,10 @@ public class OpenX {
             
             
             String nearestUser = "Dla uzytkownika: " + jo_user1.get("name") + " najblizej mieszkajacy jest uzytkownik: " + jo_user2.get("name");
-            System.out.println(nearestUser);
+            userNearest.add(nearestUser);
         }
-        
+        return userNearest;
+
     }
     
     //##########################
@@ -161,33 +195,22 @@ public class OpenX {
     {
         Map<JSONObject, List<JSONObject>> map_user_and_post = new HashMap<>();
         List<String> count_post = new ArrayList<>();
+        List<String> non_unique_title = new ArrayList<>();
         JSONArray list_of_posts = new JSONArray(); 
         JSONArray list_of_users = new JSONArray(); 
 
         OpenX openx = new OpenX();
         
         getPost get = new getPost();
-        list_of_posts = get.response();   
+        list_of_posts = get.response("https://jsonplaceholder.typicode.com/posts");  
         
         getUser users = new getUser();
-        list_of_users = users.response(); 
+        list_of_users = users.response("https://jsonplaceholder.typicode.com/users"); 
         
         map_user_and_post = openx.connect_user_post(list_of_posts, list_of_users);
         count_post = openx.count_post(map_user_and_post);
         openx.near_user(list_of_users);
-        
-//        JSONObject job = (JSONObject) list_of_users.get(0);
-//        JSONObject jobb = (JSONObject) job.get("address");
-//        System.out.println(job);
-//        System.out.println(jobb);
-        
-//        for(Object u: list_of_users)
-//        {
-//            JSONObject jo = (JSONObject) u;
-//            System.out.println(u);
-//        }
-        
-//        System.out.println(list_of_users.get(0));      
+        non_unique_title = openx.title_non_unique(list_of_posts);
     }
 }
 

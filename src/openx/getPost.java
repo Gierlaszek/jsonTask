@@ -18,8 +18,7 @@ import org.json.simple.parser.ParseException;
  */
 public class getPost{
     
-    JSONArray response() throws IOException, JSONException, ParseException{
-        String url = "https://jsonplaceholder.typicode.com/posts";
+    JSONArray response(String url) throws IOException, JSONException, ParseException{
         URL object = new URL(url);
         URLConnection con = object.openConnection();
         
@@ -30,22 +29,7 @@ public class getPost{
         JSONParser parse = new JSONParser();
         
         while((inputLine = in.readLine()) != null){
-//            //#######################
-//            // if line contains {it means, a data block is start
-//            //#######################
-//            if(inputLine.contains("{")){
-//                StringBuffer response = new StringBuffer();
-//                response.append(inputLine);
-//                while((inputLine = in.readLine()) != null){
                     response.append(inputLine);
-//                    if(inputLine.contains("}")){
-//                        response.append(System.getProperty("line.separator"));  //add enter after block of data is end
-//                        break;
-//                    }
-//                }
-//                JSONObject item = new JSONObject(response.toString());
-//                items.add(item);
-//            }
         }
         in.close();
         
